@@ -7,12 +7,13 @@ from Gomoku import Gomoku
 
 class Env:
     #inputs are board size, win condition, agent1, agent2, and batch size
-    def __init__(self, board_size, win_con, agent1, agent2, batchSize):
+    def __init__(self, board_size, win_con, agent1, agent2, batchSize,epsilon=0.2):
         self.agent1 = agent1
         self.agent2 = agent2
         self.batchSize = batchSize
         self.board_size = board_size
         self.win_con = win_con
+        self.epsilon = epsilon
     
     #plays batch of games
     def playBatch(self):
@@ -26,10 +27,6 @@ class Env:
         game = Gomoku(self.board_size, self.win_con)
         #game.game()
         winner = game.getWinner()
-        self.agent1.last_state_action = None
-        self.agent1.this_state_action = None
-        self.agent2.last_state_action = None
-        self.agent2.this_state_action = None
 
         r1 = 0
         r2 = 0
@@ -37,7 +34,7 @@ class Env:
         while(winner == -1):
             #player 1
             #gets move
-            best_move=self.agent1.getMove(game.getState())
+            best_move=self.agent1.getMove(game.getState(),self.epsilon)
             game.playMove(best_move)
             #updates batch in agent
             self.agent1.updateBatch(r1)
@@ -49,7 +46,7 @@ class Env:
                 break
             #player 2
             #gets move
-            best_move=self.agent2.getMove(game.getState())
+            best_move=self.agent2.getMove(game.getState(),self.epsilon)
             game.playMove(best_move)
             #updates batch in agent
             self.agent2.updateBatch(r2)
