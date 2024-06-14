@@ -16,7 +16,7 @@ class DefaultAgent(Agent):
     model.compile(optimizer=keras.optimizers.Adam(learning_rate=1e-3),
     loss=keras.losses.MeanSquaredError())
 
-    def __init__(self, player, alpha, model):
-        super(player, alpha)
-
-        self.model = model
+    def __init__(self, player, alpha, input_model=None):
+        super().__init__(player, alpha)
+        if input_model != None:
+            self.model = input_model

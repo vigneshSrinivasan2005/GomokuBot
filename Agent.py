@@ -4,13 +4,14 @@ import pandas as pd
 import tensorflow as tf
 
 class Agent:
-
+    
     def __init__(self, player, alpha):
         self.last_state_value = None
         self.this_state_value = None
         self.batch = pd.DataFrame(columns = ["state", "value"])
         self.alpha = alpha
         self.player = player
+        
 
     def __updateAgent(self, new_state_value):
         self.last_state_value = self.this_state_value
@@ -51,7 +52,7 @@ class Agent:
         if (random.random() < epsilon):
             best_move = random.choice(legal_moves)
 
-        self.__updateAgent(best_move)
+        self.__updateAgent(self.__getNextState(state, best_move))
         return best_move
 
     def update(self):
@@ -73,11 +74,12 @@ class Agent:
 
         elif(self.last_state_value != None):
             #print(state)
-            y = reward + self.gamma * self.getStateValue(self.this_state_value)
+            y = reward + self.gamma * self.__getStateValue(self.this_state_value)
             #print(tf.get_static_value(y)[0], " y")
             x = np.array(self.last_state_value).flatten()
             if not (self.batch['state'].apply(lambda input: np.array_equal(input, x)).any()):
                 self.batch.loc[len(self.batch.index)] = [x, 0]
             con1 = self.batch["state"].apply(lambda input: np.array_equal(input, x))
             self.batch.loc[con1, 'value'] = self.batch.loc[con1, 'value'] + self.alpha * (tf.get_static_value(y)[0] - self.batch.loc[con1, 'value'])
-            
+    def save(self, name):
+        self.model.save(name)
