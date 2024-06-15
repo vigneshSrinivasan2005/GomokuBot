@@ -1,61 +1,39 @@
+import numpy as np
+
 class Gomoku:
   def __init__(self, board_size = 19, win_con = 5):
     self.board_size = board_size
     self.win_con = win_con
     self.game = 0                #NOTE: current game state is stored as an integer
     self.last_move = -1
-    self.cur_player = 1
+    self.cur_player = 1   #depricated
 
-  #converts base 10 integer into base 3 integer into array
-  def __gameToArray(self):
+    self.__to_int_vector1 = np.array([3 ** i for i in range(self.board_size)])
+    self.__to_int_vector2 = np.array([3 ** (i * self.board_size) for i in range(self.board_size)])
+
+  #converts base 10 integer into base 3 integer into array (DON'T USE, THIS IS SLOW)
+  def __toArray(self, input):
     array = []
-    temp = self.game
+    temp = input
     for i in range(self.board_size):
       row = []
       for j in range(self.board_size):
-        row.insert(0, temp % 3)
+        row.append(temp % 3)
         temp = temp//3
-      array.insert(0, row)
+      array.append(row)
     return array
 
   #converts array of game state into base 10 integer
-  def __gameToInt(self, array):
-    base = 1
-    integer = 0
-    array_r = [array[i] for i in range(len(array) - 1, -1, -1)]
-    for i in array_r:
-      i_r = [i[k] for k in range(len(i) - 1, -1, -1)]
-      for j in i_r:
-        integer += j * base
-        base = base * 3
-    return integer
+  def __toInt(self, array):
+    out = np.dot(np.dot(array, self.__to_int_vector1), self.__to_int_vector2)
+    return out
 
-  #converts base 10 integer to array of 2 values with base = board size
-  def __actionToArray(self, action):
-    array = []
-    temp = action
-    for i in range(2):
-      array.insert(0, temp % self.board_size)
-      temp = temp//self.board_size
-    return array
-
-  #converts array of 2 values to base 10 int
-  def __actionToInt(self, action):
-    base = 1
-    integer = 0
-    action_r = [action[i] for i in range(len(action) - 1, -1, -1)]
-    for i in action_r:
-      integer += i * base
-      base = base * self.board_size
-    return integer
-
-  def getState(self):
+  #DON'T USE, SLOW
+  def getStateArray(self):
     return self.__gameToArray()
 
   def getNextState(self, move):
-    s = self.__gameToArray()
-    s[move[0]][move[1]] = self.cur_player
-    return s
+    return self.game + move
 
 
   #returns 1 or 2 for the player that has won, 0 if the game has ended and is drawn, -1 if the game is not ended
@@ -66,11 +44,14 @@ class Gomoku:
       return -1
 
     #initialization
-    cur_state = self.__gameToArray()
-    cur_action = self.__actionToArray(self.last_move)
-    cur_action[0] = int(cur_action[0])
-    cur_action[1] = int(cur_action[1])
-    mover = cur_state[cur_action[0]][cur_action[1]]
+    cur_state = self.__toArray(self.game)
+    mover = 2 - (self.last_move % 2)                   #if last move is odd, then the player who moved was 1, if it was even then the player who moved was 2
+    last_move = self.last_move/mover                   #reduces the mover to 
+    cur_action = [0] * 2
+    temp = np.log(last_move, 3)
+    cur_action[1] = int(temp % self.board_size)     #log base 3 of the move equals col + (row * size)
+    cur_action[0] = int(temp // self.board_size)
+    
 
     #check vertical
     verticalCount=1
@@ -91,7 +72,6 @@ class Gomoku:
 
 
     #check horizontal
-
     horizontalCount=1
     currColCheck=cur_action[1]+1
 
@@ -160,22 +140,19 @@ class Gomoku:
       return 0
     return -1
 
-  #return list of legal moves in a the current state
+  #return list of legal moves in a the current state      #TODO make faster maybe
   def getLegalMoves(self):
-    cur_state = self.__gameToArray()
+    cur_state = self.game
     legal_moves = []
-    for i in range(len(cur_state)):
-      for j in range(len(cur_state[i])):
-        if(cur_state[i][j] == 0):
-          legal_moves.append([i, j])
+    move = 1
+    for i in range(self.board_size):
+      for j in range(self.board_size):
+        if(cur_state % 3 == 0):
+          legal_moves.append(move)
+        move *= 3
     return legal_moves
 
-  #returns the next state after a move from the current state
-  def getNextState(self, move):
-    state = self.__gameToArray()
-    #print(str(move))
-    state[move[0]][move[1]] = self.cur_player
-    return state
+
   #returns reward from the current state
   def getReward(self):
     winner = self.getWinner()
@@ -187,12 +164,11 @@ class Gomoku:
       return 1
     if(winner == 2):
       return -1
+    
   #updates internals of game
   def playMove(self, move):
-    cur_state = self.__gameToArray()
-    cur_state[move[0]][move[1]] = self.cur_player
     #print(cur_state)
-    self.game = self.__gameToInt(cur_state)
-    self.last_move = self.__actionToInt(move)
+    self.game = self.getNextState(move)
+    self.last_move = move
     self.cur_player = ((self.cur_player) % 2) + 1
     #print(move)

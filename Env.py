@@ -43,6 +43,8 @@ class Env:
             #checks if game is over
             winner = game.getWinner()
             if(winner == 1 or winner == 0):
+                self.agent1.updateBatch(r1)
+                self.agent2.updateBatch(-r1)
                 break
             #player 2
             #gets move
@@ -54,5 +56,9 @@ class Env:
             r2 = game.getReward()
             #checks if game is over
             winner = game.getWinner()
-            if(winner == 1 or winner == 0):
+            if(winner == 2 or winner == 0):
+                self.agent1.updateBatch(r2)
+                self.agent2.updateBatch(-r2)
                 break
+
+
