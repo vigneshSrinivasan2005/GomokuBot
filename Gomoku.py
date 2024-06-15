@@ -30,7 +30,7 @@ class Gomoku:
 
   #DON'T USE, SLOW
   def getStateArray(self):
-    return self.__gameToArray()
+    return self.__toArray(self.game)
 
   def getNextState(self, move):
     return self.game + move

@@ -6,26 +6,46 @@ import tensorflow as tf
 class Agent:
     
     def __init__(self, player, alpha):
-        self.last_state_value = None
-        self.this_state_value = None
+        self.last_state_action = None
+        self.this_state_action = None
         self.batch = pd.DataFrame(columns = ["state", "value"])
         self.alpha = alpha
         self.player = player
         
+    #converts base 10 integer into base 3 integer into array (DON'T USE, THIS IS SLOW)
+    def __toArray(self, input):
+        array = []
+        temp = input
+        for i in range(self.board_size):
+            row = []
+            for j in range(self.board_size):
+                row.append(temp % 3)
+                temp = temp//3
+            array.append(row)
+        return array
 
-    def __updateAgent(self, new_state_value):
-        self.last_state_value = self.this_state_value
-        self.this_state_value = new_state_value
+    #converts array of game state into base 10 integer
+    def __toInt(self, array):
+        out = np.dot(np.dot(array, self.__to_int_vector1), self.__to_int_vector2)
+        return out
+    
+    def __updateAgent(self, new_state_action):
+        self.last_state_action = self.this_state_action
+        self.this_state_action = new_state_action
 
     def __getLegalMoves(self, state):
+        cur_state = state
         legal_moves = []
-        for i in range(len(state)):
-            for j in range(len(state[i])):
-                if(state[i][j] == 0):
-                    legal_moves.append([i, j])
+        move = 1
+        for i in range(self.board_size):
+            for j in range(self.board_size):
+                if(cur_state % 3 == 0):
+                    legal_moves.append(move)
+                move *= 3
         return legal_moves
 
     def __getStateValue(self, state):
+        state = self.__toArray(state)
         if(state == None):
             return 0
         temp = np.array(state).flatten()
@@ -36,13 +56,12 @@ class Agent:
     
     def __getNextState(self, state, move):
         #print(str(move))
-        state[move[0]][move[1]] = self.player
-        return state
+        return state + move
 
     def getMove(self, state, epsilon):
         legal_moves = self.__getLegalMoves(state)
         best_move = None
-        best_score = -1000
+        best_score = -1000000
         for move in legal_moves:
             next = self.__getNextState(state, move)
             value = self.__getStateValue(next)
@@ -57,6 +76,10 @@ class Agent:
 
     def update(self):
         x = np.array(self.batch["state"].to_list())
+        new_x = []
+        for value in x:
+            new_x.append(self.__toArray(value))
+        new_x = np.array(new_x)
         #print(x, " x")
         y = np.array(self.batch["value"].to_list())
         #print(y, " y")
@@ -64,22 +87,26 @@ class Agent:
 
     def updateBatch(self, reward):
         #print("sad ", state, " ", next_state)
-        if(self.this_state_value == None):
+        if(self.this_state_action == None):
             y = reward
-            x = np.array(self.last_state_value).flatten()
-            if not (self.batch['state'].apply(lambda input: np.array_equal(input, x)).any()):
-                self.batch.loc[len(self.batch.index)] = [x, 0]
-            con1 = self.batch["state"].apply(lambda input: np.array_equal(input, x))
-            self.batch.loc[con1, 'value'] = self.batch.loc[con1, 'value'] + self.alpha * (y - self.batch.loc[con1, 'value'])
+            x = self.last_state_action
 
-        elif(self.last_state_value != None):
-            #print(state)
-            y = reward + self.gamma * self.__getStateValue(self.this_state_value)
-            #print(tf.get_static_value(y)[0], " y")
-            x = np.array(self.last_state_value).flatten()
-            if not (self.batch['state'].apply(lambda input: np.array_equal(input, x)).any()):
+            if not (x in self.batch["state"].values):
                 self.batch.loc[len(self.batch.index)] = [x, 0]
-            con1 = self.batch["state"].apply(lambda input: np.array_equal(input, x))
-            self.batch.loc[con1, 'value'] = self.batch.loc[con1, 'value'] + self.alpha * (tf.get_static_value(y)[0] - self.batch.loc[con1, 'value'])
+
+            self.batch.loc[self.batch["state"] == x, "value"].iloc[0] += self.alpha * (y - self.batch.loc[self.batch["state"] == x, "value"].iloc[0])
+
+
+        elif(self.last_state_action != None):
+            #print(state)
+            y = reward + self.gamma * self.__getStateValue(self.this_state_action)
+            #print(tf.get_static_value(y)[0], " y")
+            x = self.last_state_action
+
+            if not (x in self.batch["state"].values):
+                self.batch.loc[len(self.batch.index)] = [x, 0]
+
+            self.batch.loc[self.batch["state"] == x, "value"].iloc[0] += self.alpha * (tf.get_static_value(y)[0] - self.batch.loc[self.batch["state"] == x, "value"].iloc[0])
+
     def save(self, name):
         self.model.save(name)
