@@ -17,6 +17,6 @@ class DefaultAgent(Agent):
     loss=keras.losses.MeanSquaredError())
 
     def __init__(self, player, alpha, input_model=None):
-        super().__init__(player, alpha)
+        super().__init__(player, alpha, 3)
         if input_model != None:
             self.model = input_model

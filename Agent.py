@@ -5,12 +5,13 @@ import tensorflow as tf
 
 class Agent:
     
-    def __init__(self, player, alpha):
+    def __init__(self, player, alpha, board_size):
         self.last_state_action = None
         self.this_state_action = None
         self.batch = pd.DataFrame(columns = ["state", "value"])
         self.alpha = alpha
         self.player = player
+        self.board_size = board_size
         
     #converts base 10 integer into base 3 integer into array (DON'T USE, THIS IS SLOW)
     def __toArray(self, input):

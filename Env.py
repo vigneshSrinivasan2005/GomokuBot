@@ -34,7 +34,7 @@ class Env:
         while(winner == -1):
             #player 1
             #gets move
-            best_move=self.agent1.getMove(game.getState(),self.epsilon)
+            best_move=self.agent1.getMove(game.getState(), self.epsilon)
             game.playMove(best_move)
             #updates batch in agent
             self.agent1.updateBatch(r1)
