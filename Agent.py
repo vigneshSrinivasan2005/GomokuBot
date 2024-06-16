@@ -41,7 +41,8 @@ class Agent:
         for i in range(self.board_size):
             for j in range(self.board_size):
                 if(cur_state % 3 == 0):
-                    legal_moves.append(move)
+                    legal_moves.append(move*self.player)
+                cur_state = cur_state // 3
                 move *= 3
         return legal_moves
 
@@ -79,12 +80,14 @@ class Agent:
         x = np.array(self.batch["state"].to_list())
         new_x = []
         for value in x:
-            new_x.append(self.__toArray(value))
+            new_x.append(np.array(self.__toArray(value)).flatten())
         new_x = np.array(new_x)
         #print(x, " x")
         y = np.array(self.batch["value"].to_list())
         #print(y, " y")
-        self.model.train_on_batch(x, y)
+        self.model.train_on_batch(new_x, y)
+        #print("emptying batch")
+        self.batch = pd.DataFrame(columns = ["state", "value"])
 
     def updateBatch(self, reward):
         #print("sad ", state, " ", next_state)
@@ -95,22 +98,23 @@ class Agent:
             if not (x in self.batch["state"].values):
                 self.batch.loc[len(self.batch.index)] = [x, 0]
 
-
+            #TODO is bugged
             #Takes the value of the state_action_pair x', in the batch, and updates it to be equal to x' + alpha *(y - x') 
             # where y is equal to the value estimate given by the current model estimate of the next state action pair and the reward
-            self.batch.loc[self.batch["state"] == x, "value"].iloc[0] += self.alpha * (y - self.batch.loc[self.batch["state"] == x, "value"].iloc[0])
+            self.batch.loc[self.batch["state"] == x, "value"] += self.alpha * (y - self.batch.loc[self.batch["state"] == x, "value"].iloc[0])
 
 
         elif(self.last_state_action != None):
             #print(state)
-            y = reward + self.gamma * self.__getStateValue(self.this_state_action)
+            y = reward + self.gamma * tf.get_static_value(self.__getStateValue(self.this_state_action))[0]
             #print(tf.get_static_value(y)[0], " y")
             x = self.last_state_action
 
             if not (x in self.batch["state"].values):
                 self.batch.loc[len(self.batch.index)] = [x, 0]
-
-            self.batch.loc[self.batch["state"] == x, "value"].iloc[0] += self.alpha * (tf.get_static_value(y)[0] - self.batch.loc[self.batch["state"] == x, "value"].iloc[0])
-
+            #TODO is bugged
+            self.batch.loc[self.batch["state"] == x, "value"] += self.alpha * (y - self.batch.loc[self.batch["state"] == x, "value"].iloc[0])
+        #print(self.batch)
+        #print("done w/", self.player)
     def save(self, name):
         self.model.save(name)

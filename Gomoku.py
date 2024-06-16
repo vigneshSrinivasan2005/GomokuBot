@@ -153,6 +153,7 @@ class Gomoku:
       for j in range(self.board_size):
         if(cur_state % 3 == 0):
           legal_moves.append(move)
+        cur_state = cur_state // 3
         move *= 3
     return legal_moves
 
