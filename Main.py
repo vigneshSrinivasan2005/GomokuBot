@@ -10,7 +10,7 @@ env=Env(3,3,agent1,agent2,20)
 #play batches
 start= time.time()
 for i in range(1):
-    #print(i)
+    print(i)
     env.playBatch()
 #print(time.time()-start)
 #save the agents

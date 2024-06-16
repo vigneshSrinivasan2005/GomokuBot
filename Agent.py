@@ -4,7 +4,6 @@ import pandas as pd
 import tensorflow as tf
 
 class Agent:
-    
     def __init__(self, player, alpha, board_size):
         self.last_state_action = None
         self.this_state_action = None
@@ -74,6 +73,7 @@ class Agent:
             best_move = random.choice(legal_moves)
 
         self.__updateAgent(self.__getNextState(state, best_move))
+        
         return best_move
 
     def update(self):
@@ -89,14 +89,16 @@ class Agent:
         #print("emptying batch")
         self.batch = pd.DataFrame(columns = ["state", "value"])
 
+
     def updateBatch(self, reward):
+        #print(self.batch)
         #print("sad ", state, " ", next_state)
         if(self.this_state_action == None):
             y = reward
             x = self.last_state_action
 
             if not (x in self.batch["state"].values):
-                self.batch.loc[len(self.batch.index)] = [x, 0]
+                self.batch.loc[len(self.batch.index)] = [x, 0.0]
 
             #TODO is bugged
             #Takes the value of the state_action_pair x', in the batch, and updates it to be equal to x' + alpha *(y - x') 
@@ -111,9 +113,9 @@ class Agent:
             x = self.last_state_action
 
             if not (x in self.batch["state"].values):
-                self.batch.loc[len(self.batch.index)] = [x, 0]
+                self.batch.loc[len(self.batch.index)] = [x, 0.0]
             #TODO is bugged
-            self.batch.loc[self.batch["state"] == x, "value"] += self.alpha * (y - self.batch.loc[self.batch["state"] == x, "value"].iloc[0])
+            self.batch.loc[self.batch["state"] == x, "value"] += (self.alpha * (y - self.batch.loc[self.batch["state"] == x, "value"].iloc[0]))
         #print(self.batch)
         #print("done w/", self.player)
     def save(self, name):
