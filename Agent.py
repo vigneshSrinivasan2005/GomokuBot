@@ -95,6 +95,9 @@ class Agent:
             if not (x in self.batch["state"].values):
                 self.batch.loc[len(self.batch.index)] = [x, 0]
 
+
+            #Takes the value of the state_action_pair x', in the batch, and updates it to be equal to x' + alpha *(y - x') 
+            # where y is equal to the value estimate given by the current model estimate of the next state action pair and the reward
             self.batch.loc[self.batch["state"] == x, "value"].iloc[0] += self.alpha * (y - self.batch.loc[self.batch["state"] == x, "value"].iloc[0])
 
 
