@@ -181,4 +181,6 @@ class Gomoku:
     print(p[0])
     print(p[1])
     print(p[2])
+    print(p[3])
+    print(p[4])
     print()

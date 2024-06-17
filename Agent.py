@@ -70,6 +70,7 @@ class Agent:
                 best_move = move
                 best_score = value
         if (random.random() < epsilon):
+            print("random")
             best_move = random.choice(legal_moves)
 
         self.__updateAgent(self.__getNextState(state, best_move))

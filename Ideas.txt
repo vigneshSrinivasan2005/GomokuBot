@@ -1,0 +1,10 @@
+1. enlarge NN(probably underfitting)
+2. train against another model
+3. change inputs to binary with larger inputs
+4. add player to inputs(p1/p2)
+5. reward for finishing faster/lasting longer
+6. change reward rates
+7. change the gamma?
+8. randomize starts
+9. rotations
+
