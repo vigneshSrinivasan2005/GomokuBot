@@ -38,6 +38,9 @@ class Gomoku:
 
   def getNextState(self, move):
     return self.game + move
+  
+  def getPosValue(self, row, col):
+    return (self.game // (self.__to_int_vector1[col] * self.__to_int_vector2[row])) % 3
 
 
   #returns 1 or 2 for the player that has won, 0 if the game has ended and is drawn, -1 if the game is not ended
