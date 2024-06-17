@@ -52,7 +52,7 @@ class Gomoku:
     mover = 2 - (self.last_move % 2)                   #if last move is odd, then the player who moved was 1, if it was even then the player who moved was 2
     last_move = self.last_move/mover                   #reduces the mover to 
     cur_action = [0] * 2
-    temp = math.log(last_move, 3)
+    temp = int(math.log(last_move, 3) + 0.5)
     cur_action[1] = int(temp % self.board_size)     #log base 3 of the move equals col + (row * size)
     cur_action[0] = int(temp // self.board_size)
     
@@ -177,3 +177,8 @@ class Gomoku:
     self.last_move = move
     self.cur_player = ((self.cur_player) % 2) + 1
     #print(move)
+    p = self.__toArray(self.game)
+    print(p[0])
+    print(p[1])
+    print(p[2])
+    print()
