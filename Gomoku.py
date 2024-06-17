@@ -51,7 +51,7 @@ class Gomoku:
       return -1
 
     #initialization
-    cur_state = self.__toArray(self.game)
+    cur_state = self.game
     mover = 2 - (self.last_move % 2)                   #if last move is odd, then the player who moved was 1, if it was even then the player who moved was 2
     last_move = self.last_move/mover                   #reduces the mover to 
     cur_action = [0] * 2
@@ -64,13 +64,13 @@ class Gomoku:
     verticalCount=1
     currRowCheck=cur_action[0]+1
     #check upwards
-    while currRowCheck<self.board_size and cur_state[currRowCheck][cur_action[1]]==mover:
+    while currRowCheck<self.board_size and self.getPosValue(currRowCheck, cur_action[1])==mover:
         verticalCount+=1
         currRowCheck+=1
 
     currRowCheck=cur_action[0]-1
     #check downwards
-    while currRowCheck>=0 and cur_state[currRowCheck][cur_action[1]]==mover:
+    while currRowCheck>=0 and self.getPosValue(currRowCheck, cur_action[1])==mover:
         verticalCount+=1
         currRowCheck-=1
 
@@ -83,13 +83,13 @@ class Gomoku:
     currColCheck=cur_action[1]+1
 
     #check right
-    while currColCheck<self.board_size and cur_state[cur_action[0]][currColCheck]==mover:
+    while currColCheck<self.board_size and self.getPosValue(cur_action[0],currColCheck)==mover:
         horizontalCount+=1
         currColCheck+=1
 
     currColCheck=cur_action[1]-1
     #check left
-    while currColCheck>=0 and cur_state[cur_action[0]][currColCheck]==mover:
+    while currColCheck>=0 and self.getPosValue(cur_action[0],currColCheck)==mover:
         horizontalCount+=1
         currColCheck-=1
 
@@ -102,7 +102,7 @@ class Gomoku:
     currColCheck=cur_action[1]+1
 
     #check down and to the right
-    while currRowCheck<self.board_size and currColCheck<self.board_size and cur_state[currRowCheck][currColCheck]==mover:
+    while currRowCheck<self.board_size and currColCheck<self.board_size and self.getPosValue(currRowCheck,currColCheck)==mover:
         topLeftDiagonalCount+=1
         currRowCheck+=1
         currColCheck+=1
@@ -111,7 +111,7 @@ class Gomoku:
     currColCheck=cur_action[1]-1
 
     #check up and to the left
-    while currRowCheck>=0 and currColCheck>=0 and cur_state[currRowCheck][currColCheck]==mover:
+    while currRowCheck>=0 and currColCheck>=0 and self.getPosValue(currRowCheck,currColCheck)==mover:
         topLeftDiagonalCount+=1
         currRowCheck-=1
         currColCheck-=1
@@ -125,7 +125,7 @@ class Gomoku:
     currColCheck=cur_action[1]-1
 
     #check down and to the left
-    while currRowCheck<self.board_size and currColCheck>=0 and cur_state[currRowCheck][currColCheck]==mover:
+    while currRowCheck<self.board_size and currColCheck>=0 and self.getPosValue(currRowCheck,currColCheck)==mover:
         topRightDiagonalCount+=1
         currRowCheck+=1
         currColCheck-=1
@@ -134,7 +134,7 @@ class Gomoku:
     currColCheck=cur_action[1]+1
 
     #check up and to the right
-    while currRowCheck>=0 and currColCheck<self.board_size and cur_state[currRowCheck][currColCheck]==mover:
+    while currRowCheck>=0 and currColCheck<self.board_size and self.getPosValue(currRowCheck,currColCheck)==mover:
         topRightDiagonalCount+=1
         currRowCheck-=1
         currColCheck+=1
