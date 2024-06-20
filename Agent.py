@@ -13,7 +13,7 @@ class Agent:
         self.board_size = board_size
         
     #converts base 10 integer into base 3 integer into array (DON'T USE, THIS IS SLOW)
-    def __toArray(self, input):
+    def _toArray(self, input):
         array = []
         temp = input
         for i in range(self.board_size):
@@ -25,15 +25,15 @@ class Agent:
         return array
 
     #converts array of game state into base 10 integer
-    def __toInt(self, array):
+    def _toInt(self, array):
         out = np.dot(np.dot(array, self.__to_int_vector1), self.__to_int_vector2)
         return out
     
-    def __updateAgent(self, new_state_action):
+    def _updateAgent(self, new_state_action):
         self.last_state_action = self.this_state_action
         self.this_state_action = new_state_action
 
-    def __getLegalMoves(self, state):
+    def _getLegalMoves(self, state):
         cur_state = state
         legal_moves = []
         move = 1
@@ -45,8 +45,8 @@ class Agent:
                 move *= 3
         return legal_moves
 
-    def __getStateValue(self, state):
-        state = self.__toArray(state)
+    def _getStateValue(self, state):
+        state = self._toArray(state)
         if(state == None):
             return 0
         temp = np.array(state).flatten()
@@ -55,17 +55,17 @@ class Agent:
         out = self.model(input, training = False)
         return out[0]
     
-    def __getNextState(self, state, move):
+    def _getNextState(self, state, move):
         #print(str(move))
         return state + move
 
     def getMove(self, state, epsilon):
-        legal_moves = self.__getLegalMoves(state)
+        legal_moves = self._getLegalMoves(state)
         best_move = None
         best_score = -1000000
         for move in legal_moves:
-            next = self.__getNextState(state, move)
-            value = self.__getStateValue(next)
+            next = self._getNextState(state, move)
+            value = self._getStateValue(next)
             if(value >= best_score):
                 best_move = move
                 best_score = value
@@ -73,7 +73,7 @@ class Agent:
             print("random")
             best_move = random.choice(legal_moves)
 
-        self.__updateAgent(self.__getNextState(state, best_move))
+        self._updateAgent(self._getNextState(state, best_move))
         
         return best_move
 
@@ -81,7 +81,7 @@ class Agent:
         x = np.array(self.batch["state"].to_list())
         new_x = []
         for value in x:
-            new_x.append(np.array(self.__toArray(value)).flatten())
+            new_x.append(np.array(self._toArray(value)).flatten())
         new_x = np.array(new_x)
         #print(x, " x")
         y = np.array(self.batch["value"].to_list())
@@ -109,7 +109,7 @@ class Agent:
 
         elif(self.last_state_action != None):
             #print(state)
-            y = reward + self.gamma * tf.get_static_value(self.__getStateValue(self.this_state_action))[0]
+            y = reward + self.gamma * tf.get_static_value(self._getStateValue(self.this_state_action))[0]
             #print(tf.get_static_value(y)[0], " y")
             x = self.last_state_action
 
