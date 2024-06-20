@@ -19,6 +19,7 @@ class Env:
     #plays batch of games
     def playBatch(self):
         for i in range(self.batchSize):
+            #print("game: ", i)
             self.__playGame()
         if(self.agent1_is_training):
             self.agent1.update()
