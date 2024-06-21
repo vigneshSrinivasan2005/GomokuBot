@@ -51,7 +51,7 @@ class Env:
                 if(self.agent1_is_training):
                     self.agent1.updateBatch(r1)
                 if(self.agent2_is_training):
-                    self.agent2.updateBatch(r2)
+                    self.agent2.updateBatch(-r1)
                 break
             #player 2
             #gets move
@@ -59,16 +59,16 @@ class Env:
             game.playMove(best_move)
             #updates batch in agent
             if(self.agent2_is_training):
-                self.agent2.updateBatch(r2)
+                self.agent2.updateBatch(-r2)
             #gets reward
             r2 = game.getReward()
             #checks if game is over
             winner = game.getWinner()
             if(winner == 2 or winner == 0):
                 if(self.agent1_is_training):
-                    self.agent1.updateBatch(r1)
+                    self.agent1.updateBatch(r2)
                 if(self.agent2_is_training):
-                    self.agent2.updateBatch(r2)
+                    self.agent2.updateBatch(-r2)
                 break
 
 

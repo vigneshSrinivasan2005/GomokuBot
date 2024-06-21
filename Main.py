@@ -16,7 +16,7 @@ agent2=DefaultVigeAgent(1, .1)
 env=Env(3,3,agent1,agent2,20, agent1_is_training = True, agent2_is_training = True)
 #play batches
 start= time.time()
-for i in range(10):
+for i in range(1000):
     print(i)
     start2= time.time()
     env.playBatch()
