@@ -9,7 +9,7 @@ from tensorflow import keras
 import time
 #create 2 new agent
 m1 = keras.models.load_model("3x3_7hidden_tanhrelu_10kbatches_20pBatch_UCB.keras")
-agent1=Agent3x3UCB(1,.1,m1)
+agent1=Agent3x3UCB(1, .1, .1, m1)
 agent2=Player(2)
 #call env();
 #inputs are board size, win condition, agent1, agent2, and batch size
