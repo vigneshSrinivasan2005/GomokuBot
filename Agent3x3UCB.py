@@ -26,6 +26,7 @@ class Agent3x3UCB(Agent):
         self.N = pd.DataFrame(columns = ["state", "times"])
         if input_model != None:
             self.model = input_model
+            
         
 
     def getMove(self, state, epsilon = 0):

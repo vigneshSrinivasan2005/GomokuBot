@@ -11,6 +11,9 @@ class Agent:
         self.alpha = alpha
         self.player = player
         self.board_size = board_size
+        self.__to_int_vector1 = np.array([3 ** i for i in range(self.board_size)])
+        self.__to_int_vector2 = np.array([3 ** (i * self.board_size) for i in range(self.board_size)])
+
         
     #converts base 10 integer into base 3 integer into array (DON'T USE, THIS IS SLOW)
     def _toArray(self, input):

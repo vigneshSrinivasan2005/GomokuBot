@@ -181,9 +181,7 @@ class Gomoku:
     self.cur_player = ((self.cur_player) % 2) + 1
     #print(move)
     p = self.__toArray(self.game)
-    print(p[0])
-    print(p[1])
-    print(p[2])
-    #print(p[3])
-    #print(p[4])
-    print()
+    #print(p[0])
+    #print(p[1])
+    #print(p[2])
+
