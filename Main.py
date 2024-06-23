@@ -5,8 +5,8 @@ import tensorflow as tf
 from tensorflow import keras
 import time
 #create 2 new agent)
-#model = keras.models.load_model("MiniMax.keras")
-agent1 = MinimaxModel(3, "MinMax.csv", 1)
+model = keras.models.load_model("modifiedMinMaxSmullLayers.keras")
+agent1 = MinimaxModel(3, "modifiedMinMax.csv", 1, model)
 agent2 = Player(2)
 #call env();
 #inputs are board size, win condition, agent1, agent2, and batch size
@@ -20,4 +20,4 @@ for i in range(5):
     print(time.time()-start2)
 print(time.time()-start)
 #save the agents
-agent1.save("mORELAYERS.keras")
+agent1.save("modifiedMinMaxSmullLayers.keras")

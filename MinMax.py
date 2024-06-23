@@ -14,7 +14,7 @@ def getMinMax(game,df):
         child=game.copy()
         child.playMove(move*game.getCurPlayer())
         children.append(getMinMax(child,df))
-    min=getValue(game.getCurPlayer(),children)
+    min=getValue(game.getCurPlayer(),children)*.9
     df.loc[len(df)]=[game.getState(),min]
     return min
 
@@ -48,7 +48,7 @@ def getMin(children):
     return min
 
 df=DataFrame(columns=["State","Value"])
-game=Gomoku(3,3)
+game=Gomoku(5,4)
 getMinMax(game,df)
 #save the df to a csv file
-df.to_csv("MinMax.csv",index=False)
+df.to_csv("modifiedMinMax.csv",index=False)
