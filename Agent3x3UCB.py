@@ -39,12 +39,17 @@ class Agent3x3UCB(Agent):
             if(value >= best_score):
                 best_move = move
                 best_score = value
-
-        self._updateAgent(self._getNextState(state, best_move))
-        
         return best_move
-    def _updateAgent(self, new_state_action):
-        super()._updateAgent(new_state_action)
+    
+    def updateAgent(self, new_state_action):
+        super().updateAgent(new_state_action)
+        self.time_steps += 1
+        if not (new_state_action in self.N["state"].values):
+                self.N.loc[len(self.N.index)] = [new_state_action, 1]
+        self.N.loc[self.N["state"] == new_state_action, "times"] += 1
+
+    def updateOpp(self, new_state_action):
+        super().updateOpp(new_state_action)
         self.time_steps += 1
         if not (new_state_action in self.N["state"].values):
                 self.N.loc[len(self.N.index)] = [new_state_action, 1]

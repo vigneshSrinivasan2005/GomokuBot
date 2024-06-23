@@ -21,6 +21,7 @@ class Env:
         for i in range(self.batchSize):
             #print("game: ", i)
             self.__playGame()
+        #print(self.agent1.batch)
         if(self.agent1_is_training):
             self.agent1.update()
         if(self.agent2_is_training):
@@ -40,6 +41,9 @@ class Env:
             #gets move
             best_move=self.agent1.getMove(game.getState(), self.epsilon)
             game.playMove(best_move)
+            self.agent1.updateAgent(game.game)
+            self.agent2.updateOpp(game.game)
+
             #updates batch in agent
             if(self.agent1_is_training):
                 self.agent1.updateBatch(r1)
@@ -48,15 +52,21 @@ class Env:
             #checks if game is over
             winner = game.getWinner()
             if(winner == 1 or winner == 0):
+                self.agent1.updateAgent(None)
+                self.agent1.updateOpp(None)
+                self.agent2.updateAgent(None)
+                self.agent2.updateOpp(None)
                 if(self.agent1_is_training):
                     self.agent1.updateBatch(r1)
                 if(self.agent2_is_training):
-                    self.agent2.updateBatch(r2)
+                    self.agent2.updateBatch(-r1)
                 break
             #player 2
             #gets move
             best_move=self.agent2.getMove(game.getState(),self.epsilon)
             game.playMove(best_move)
+            self.agent1.updateOpp(game.game)
+            self.agent2.updateAgent(game.game)
             #updates batch in agent
             if(self.agent2_is_training):
                 self.agent2.updateBatch(r2)
@@ -65,10 +75,14 @@ class Env:
             #checks if game is over
             winner = game.getWinner()
             if(winner == 2 or winner == 0):
+                self.agent1.updateAgent(None)
+                self.agent1.updateOpp(None)
+                self.agent2.updateAgent(None)
+                self.agent2.updateOpp(None)
                 if(self.agent1_is_training):
-                    self.agent1.updateBatch(r1)
+                    self.agent1.updateBatch(r2)
                 if(self.agent2_is_training):
-                    self.agent2.updateBatch(r2)
+                    self.agent2.updateBatch(-r2)
                 break
 
 

@@ -7,6 +7,8 @@ class Agent:
     def __init__(self, player, alpha, board_size):
         self.last_state_action = None
         self.this_state_action = None
+        self.opp_last_state_action = None
+        self.opp_this_state_action = None
         self.batch = pd.DataFrame(columns = ["state", "value"])
         self.alpha = alpha
         self.player = player
@@ -32,9 +34,14 @@ class Agent:
         out = np.dot(np.dot(array, self.__to_int_vector1), self.__to_int_vector2)
         return out
     
-    def _updateAgent(self, new_state_action):
+    def updateAgent(self, new_state_action):
         self.last_state_action = self.this_state_action
         self.this_state_action = new_state_action
+
+    def updateOpp(self, new_state_action):
+        self.opp_last_state_action = self.opp_this_state_action
+        self.opp_this_state_action = new_state_action
+        #print(self.opp_last_state_action, self.opp_this_state_action)
 
     def _getLegalMoves(self, state):
         cur_state = state
@@ -73,10 +80,10 @@ class Agent:
                 best_move = move
                 best_score = value
         if (random.random() < epsilon):
-            print("random")
+            #print("random")
             best_move = random.choice(legal_moves)
 
-        self._updateAgent(self._getNextState(state, best_move))
+        #self.updateAgent(self._getNextState(state, best_move))
         
         return best_move
 
@@ -92,14 +99,24 @@ class Agent:
         self.model.train_on_batch(new_x, y)
         #print("emptying batch")
         self.batch = pd.DataFrame(columns = ["state", "value"])
+        self.last_state_action = None
+        self.this_state_action = None
+        self.opp_last_state_action = None
+        self.opp_this_state_action = None
+
 
 
     def updateBatch(self, reward):
+        self._updateBatchHelper(self.last_state_action, self.this_state_action, reward)
+        self._updateBatchHelper(self.opp_last_state_action, self.opp_this_state_action, -reward)
+        #print(self.batch)
+
+    def _updateBatchHelper(self, last_state_action, this_state_action, reward ):
         #print(self.batch)
         #print("sad ", state, " ", next_state)
-        if(self.this_state_action == None):
+        if(this_state_action == None and last_state_action != None):
             y = reward
-            x = self.last_state_action
+            x = last_state_action
 
             if not (x in self.batch["state"].values):
                 self.batch.loc[len(self.batch.index)] = [x, 0.0]
@@ -110,11 +127,11 @@ class Agent:
             self.batch.loc[self.batch["state"] == x, "value"] += self.alpha * (y - self.batch.loc[self.batch["state"] == x, "value"].iloc[0])
 
 
-        elif(self.last_state_action != None):
+        elif(last_state_action != None):
             #print(state)
             y = reward + self.gamma * tf.get_static_value(self._getStateValue(self.this_state_action))[0]
             #print(tf.get_static_value(y)[0], " y")
-            x = self.last_state_action
+            x = last_state_action
 
             if not (x in self.batch["state"].values):
                 self.batch.loc[len(self.batch.index)] = [x, 0.0]
@@ -122,5 +139,6 @@ class Agent:
             self.batch.loc[self.batch["state"] == x, "value"] += (self.alpha * (y - self.batch.loc[self.batch["state"] == x, "value"].iloc[0]))
         #print(self.batch)
         #print("done w/", self.player)
+
     def save(self, name):
         self.model.save(name)
