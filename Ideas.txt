@@ -9,4 +9,5 @@
 9. rotations
 10. Use Convolutional Neural Networks
 11. Generations of models
+12.have Neural net output confidence levels of moves
 
