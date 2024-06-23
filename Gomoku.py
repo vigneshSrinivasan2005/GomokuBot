@@ -172,7 +172,8 @@ class Gomoku:
       return 1
     if(winner == 2):
       return -1
-    
+  def getCurPlayer(self):
+    return self.cur_player
   #updates internals of game
   def playMove(self, move):
     #print(cur_state)
@@ -184,4 +185,10 @@ class Gomoku:
     #print(p[0])
     #print(p[1])
     #print(p[2])
+  def copy(self):
+    g = Gomoku(self.board_size, self.win_con)
+    g.game = self.game
+    g.last_move = self.last_move
+    g.cur_player = self.cur_player
+    return g
 
