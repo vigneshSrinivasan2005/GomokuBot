@@ -69,13 +69,14 @@ class Agent:
         for move in legal_moves:
             next = self._getNextState(state, move)
             value = self._getStateValue(next)
+            print(next," ", value)
             if(value >= best_score):
                 best_move = move
                 best_score = value
         if (random.random() < epsilon):
             print("random")
             best_move = random.choice(legal_moves)
-
+        
         self._updateAgent(self._getNextState(state, best_move))
         
         return best_move
