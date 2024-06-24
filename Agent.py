@@ -69,12 +69,12 @@ class Agent:
         for move in legal_moves:
             next = self._getNextState(state, move)
             value = self._getStateValue(next)
-            print(next," ", value)
+            #print(next," ", value)
             if(value >= best_score):
                 best_move = move
                 best_score = value
         if (random.random() < epsilon):
-            print("random")
+            #print("random")
             best_move = random.choice(legal_moves)
         
         self._updateAgent(self._getNextState(state, best_move))
@@ -103,7 +103,7 @@ class Agent:
             x = self.last_state_action
 
             if not (x in self.batch["state"].values):
-                self.batch.loc[len(self.batch.index)] = [x, 0.0]
+                self.batch.loc[len(self.batch.index)] = [x, tf.get_static_value(self._getStateValue(self.last_state_action))[0]]
 
             #TODO is bugged
             #Takes the value of the state_action_pair x', in the batch, and updates it to be equal to x' + alpha *(y - x') 
@@ -118,7 +118,7 @@ class Agent:
             x = self.last_state_action
 
             if not (x in self.batch["state"].values):
-                self.batch.loc[len(self.batch.index)] = [x, 0.0]
+                self.batch.loc[len(self.batch.index)] = [x, tf.get_static_value(self._getStateValue(self.last_state_action))[0]]
             #TODO is bugged
             self.batch.loc[self.batch["state"] == x, "value"] += (self.alpha * (y - self.batch.loc[self.batch["state"] == x, "value"].iloc[0]))
         #print(self.batch)
