@@ -1,7 +1,8 @@
-from Agent import Agent
-from tensorflow import keras
+from MiniMaxAgent import MiniMaxAgent
+import keras
 from keras import layers
-class DefaultAgent(Agent):
+
+class DefaultMiniMaxAgent(MiniMaxAgent):
     gamma = 1
     model = None
     model = keras.Sequential()
@@ -16,8 +17,8 @@ class DefaultAgent(Agent):
     model.add(layers.Dense(1, activation = 'linear'))
     model.compile(optimizer=keras.optimizers.Adam(),
     loss=keras.losses.MeanSquaredError())
-
-    def __init__(self, player, alpha, input_model=None):
-        super().__init__(player, alpha, 3)
+    def __init__(self, player, alpha, board_size, input_model=None):
+        super().__init__(player, alpha, board_size)
         if input_model != None:
             self.model = input_model
+    
