@@ -17,8 +17,7 @@ class DefaultMiniMaxAgent(MiniMaxAgent):
     model.add(layers.Dense(1, activation = 'linear'))
     model.compile(optimizer=keras.optimizers.Adam(),
     loss=keras.losses.MeanSquaredError())
-    def __init__(self, player, alpha, board_size, input_model=None):
+    def __init__(self, player, alpha, board_size =3, input_model=None):
         super().__init__(player, alpha, board_size)
         if input_model != None:
             self.model = input_model
-    

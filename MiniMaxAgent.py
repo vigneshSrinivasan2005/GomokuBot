@@ -3,7 +3,7 @@ import pandas as pd
 import random
 class MiniMaxAgent(Agent):
     plict={}
-    miniMax=pd.read_csv("modifiedMinMax.csv")
+    miniMax=pd.read_csv("modifiedMinMax.csv").T.to_numpy()
     def __init__(self,player,alpha,board_size):
         super().__init__(player,alpha,board_size)
         pass
@@ -44,7 +44,4 @@ class MiniMaxAgent(Agent):
             df.loc[len(df)]=[key,self.plict[key]]
         df.to_csv(name,index=False)
     def calculateMeanSquareError(self):
-        error=0
-        for key in self.plict:
-            error+=(self.plict[key]-(self.miniMax[self.miniMax["State"]==key].values[0][1]/10))**2
-        return error
+        return self.model.evaluate(self.miniMax[0],self.miniMax[1])
