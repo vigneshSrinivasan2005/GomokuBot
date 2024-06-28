@@ -1,0 +1,8 @@
+State,Value
+81,"tf.Tensor([0.20400135], shape=(1,), dtype=float32)"
+87,"tf.Tensor([0.11107004], shape=(1,), dtype=float32)"
+114,"tf.Tensor([10.320855], shape=(1,), dtype=float32)"
+1572,"tf.Tensor([0.44189093], shape=(1,), dtype=float32)"
+1815,"tf.Tensor([10.273171], shape=(1,), dtype=float32)"
+27,"tf.Tensor([10.311743], shape=(1,), dtype=float32)"
+33,"tf.Tensor([0.44791543], shape=(1,), dtype=float32)"
