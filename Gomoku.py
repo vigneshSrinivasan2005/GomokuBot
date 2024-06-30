@@ -181,10 +181,10 @@ class Gomoku:
     self.last_move = move
     self.cur_player = ((self.cur_player) % 2) + 1
     #print(move)
-    p = self.__toArray(self.game)
-    print(p[0])
-    print(p[1])
-    print(p[2])
+    #p = self.__toArray(self.game)
+    #print(p[0])
+    #print(p[1])
+    #print(p[2])
   def copy(self):
     g = Gomoku(self.board_size, self.win_con)
     g.game = self.game
