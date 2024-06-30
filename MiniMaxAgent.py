@@ -1,8 +1,9 @@
 from Agent import Agent
 import pandas as pd
+import numpy as np
 import random
 class MiniMaxAgent(Agent):
-
+    minimax= pd.read_csv("modifiedMiniMax.csv")
     def __init__(self,player,alpha,board_size):
         super().__init__(player,alpha,board_size)
         pass
@@ -29,5 +30,13 @@ class MiniMaxAgent(Agent):
     def _updateAgent(self, state, move):
         self.last_state_action = state
         self.this_state_action = state + move
-
+    def evaluate(self):
+        x = np.array(self.batch["State"].to_list())
+        new_x = []
+        for value in x:
+            new_x.append(np.array(self._toArray(value)).flatten())
+        new_x = np.array(new_x)
+        #print(x, " x")
+        y = np.array(self.batch["value"].to_list())
+        self.model.evaluate(new_x,y)
     

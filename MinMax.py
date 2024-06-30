@@ -21,9 +21,9 @@ def getMinMax(game,df):
 #If player 1 wins value is 1, if player 2 wins value is -1, if draw value is 0
 def terminalStateValue(game):
     if(game.getWinner()==1):
-        return 10
+        return 1
     elif(game.getWinner()==2):
-        return -10
+        return -1
     else:
         return 0
 
@@ -48,7 +48,7 @@ def getMin(children):
     return min
 
 df=DataFrame(columns=["State","Value"])
-game=Gomoku(5,4)
+game=Gomoku(3,3)
 getMinMax(game,df)
 #save the df to a csv file
 df.to_csv("modifiedMinMax.csv",index=False)

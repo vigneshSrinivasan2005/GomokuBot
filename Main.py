@@ -19,6 +19,7 @@ for i in range(10):
     print(i)
     start2= time.time()
     env.playBatch()
+    agent1.evaluate()
     print(time.time()-start2)
 print(time.time()-start)
 #save the agents
