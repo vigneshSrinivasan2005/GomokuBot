@@ -2,11 +2,11 @@ import pandas as pd
 import numpy as np
 from tensorflow import keras
 from keras import layers
-from Agent import Agent
+from MiniMaxAgent import MiniMaxAgent
 #inputs to train on batch
 #2dNPArray of states
 #1dNPArray of values
-class MinimaxModel(Agent):
+class MinimaxModel(MiniMaxAgent):
     def __init__(self, board_size, file, player, model = None):
         super().__init__(player, 0, board_size)
         self.board_size = board_size
