@@ -81,6 +81,13 @@ class Agent:
         self._updateAgent(self._getNextState(state, best_move))
         
         return best_move
+    def updateSingle(self,reward):
+        #model.fit(last_State, model.predict(laststate)+alpha(predict(nextState)-model.predict(lastState)))
+        x= np.array(self._toArray(self.last_state_action)).flatten()
+        last_state_prediction = tf.get_static_value(self._getStateValue(self.last_state_action))[0]
+        this_state_prediction = tf.get_static_value(self._getStateValue(self.this_state_action))[0]
+        y= last_state_prediction+self.alpha*(reward + self.gamma *this_state_prediction-last_state_prediction)
+        self.model.train_on_batch(np.array([x]), np.array([y]))
 
     def update(self):
         x = np.array(self.batch["state"].to_list())
@@ -100,6 +107,7 @@ class Agent:
         #print(self.batch)
         #print("sad ", state, " ", next_state)
         pass
+        #print(self.batch)
         if(self.this_state_action == None):
             y = reward
             x = self.last_state_action
@@ -120,9 +128,10 @@ class Agent:
             x = self.last_state_action
 
             if not (x in self.batch["state"].values):
-                self.batch.loc[len(self.batch.index)] = [x, 0.0]
+                self.batch.loc[len(self.batch.index)] = [x, tf.get_static_value(self._getStateValue(self.last_state_action))[0]]
             #TODO is bugged
             self.batch.loc[self.batch["state"] == x, "value"] += (self.alpha * (y - self.batch.loc[self.batch["state"] == x, "value"].iloc[0]))
+        #model.fit(last_State, model.predict(laststate)+alpha(predict(nextState)-model.predict(lastState)))
         #print(self.batch)
         #print("done w/", self.player)
     def save(self, name):
