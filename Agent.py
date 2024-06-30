@@ -4,6 +4,8 @@ import pandas as pd
 import tensorflow as tf
 
 class Agent:
+    miniMax=pd.read_csv("modifiedMinMax.csv")
+   
     def __init__(self, player, alpha, board_size):
         self.last_state_action = None
         self.this_state_action = None
@@ -13,6 +15,7 @@ class Agent:
         self.board_size = board_size
         self.__to_int_vector1 = np.array([3 ** i for i in range(self.board_size)])
         self.__to_int_vector2 = np.array([3 ** (i * self.board_size) for i in range(self.board_size)])
+        
 
         
     #converts base 10 integer into base 3 integer into array (DON'T USE, THIS IS SLOW)
@@ -98,6 +101,7 @@ class Agent:
     def updateBatch(self, reward):
         #print(self.batch)
         #print("sad ", state, " ", next_state)
+        
         if(self.this_state_action == None):
             y = reward
             x = self.last_state_action
@@ -125,3 +129,11 @@ class Agent:
         #print("done w/", self.player)
     def save(self, name):
         self.model.save(name)
+    def evaluate(self):
+        x = np.array(self.miniMax["State"].to_list())
+        new_x = []
+        for value in x:
+            new_x.append(np.array(self._toArray(value)).flatten())
+        new_x = np.array(new_x)
+        y =self.miniMax["Value"].T.to_numpy()
+        return self.model.evaluate(new_x,y)

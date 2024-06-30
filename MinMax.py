@@ -1,6 +1,6 @@
 from Gomoku import Gomoku
 from pandas import DataFrame
-
+import numpy as np
 def getMinMax(game,df):
     children=[]
     if game.game in df["State"].values:
@@ -15,15 +15,16 @@ def getMinMax(game,df):
         child.playMove(move*game.getCurPlayer())
         children.append(getMinMax(child,df))
     min=getValue(game.getCurPlayer(),children)*.9
+    #print(df)
     df.loc[len(df)]=[game.getState(),min]
     return min
 
 #If player 1 wins value is 1, if player 2 wins value is -1, if draw value is 0
 def terminalStateValue(game):
     if(game.getWinner()==1):
-        return 10
+        return 1
     elif(game.getWinner()==2):
-        return -10
+        return -1
     else:
         return 0
 
@@ -48,7 +49,7 @@ def getMin(children):
     return min
 
 df=DataFrame(columns=["State","Value"])
-game=Gomoku(5,4)
+game=Gomoku(3,3)
 getMinMax(game,df)
 #save the df to a csv file
 df.to_csv("modifiedMinMax.csv",index=False)
